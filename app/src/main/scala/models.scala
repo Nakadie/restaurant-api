@@ -7,10 +7,6 @@ object models {
     println(time)
   }
 
-
-
-
-
   def main(args: Array[String]): Unit = {
     val orders = List("pizza", "tacos", "salad")
     val listoforders = orders.map(x =>new Order(x))
