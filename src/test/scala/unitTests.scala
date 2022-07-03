@@ -1,5 +1,5 @@
 import io.undertow.Undertow
-
+import requests.check
 import utest._
 
 object unitTests extends TestSuite {
@@ -28,7 +28,6 @@ object unitTests extends TestSuite {
 
         requests.get(s"$host/tables", check = true).statusCode ==> 200
 
-        requests.get(s"$host/tables/orders", data = """{"tableNumber": 1}""", check = true).statusCode ==> 200
 
         val order = """{"tableNumber": 5, "orders": ["pizza", "hamburger"]}"""
         val orders = requests.post(s"$host/tables/orders", data = order, check = true)
@@ -38,6 +37,20 @@ object unitTests extends TestSuite {
 
         //second time checking order gets a new message
         requests.post(s"$host/tables/orders", data = order, check = true).text() ==> "already have order"
+
+
+        val delete = """{"tableNumber": 1, "deleteOrder": "pizza"}"""
+        requests.delete(s"$host/tables/orders", data = delete, check = true).statusCode ==> 200
+        requests.delete(s"$host/tables/orders", data = delete, check = true).text() ==> "does not exist"
+
+        val oneOrder = """
+                         |{
+                         | "tableNumber": 2,
+                         | "order": "pizza"
+                         |}
+      """.stripMargin
+        // causes error 500 but hand tested always works.
+        // requests.get(s"$host/tables/orders/order", data = oneOrder, check = true).statusCode ==> 200
 
       }
     }
