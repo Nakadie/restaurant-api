@@ -4,5 +4,5 @@ To run the api choose and run the object [httpresponse](https://github.com/Nakad
 
 You will need a way to send and receive http requests. I recommend using [insomnia](https://insomnia.rest/download).
 
-There are 6 total commands, and they are listed with examples in this file [src/main/scala/paths](https://github.com/Nakadie/restaurant-api/blob/34cf27701d6aa9fb45ccab6d53f7b7187945db54/src/main/scala/paths)
+There are 6 total commands, and they are listed with examples in this file [src/main/scala/paths](https://github.com/Nakadie/restaurant-api/blob/a8de291d35f6490230f66b5feb6537efe9238a56/src/main/scala/paths)
 
