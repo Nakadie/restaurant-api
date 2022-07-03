@@ -8,8 +8,10 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies ++= Seq(
+  //http dependencies
   "com.lihaoyi" %% "cask" % "0.8.3",
   "com.lihaoyi" %% "requests" % "0.7.1",
   "com.lihaoyi" %% "utest" % "0.7.11" % "test",
-  "com.lihaoyi" %% "upickle" % "2.0.0",
+  "com.lihaoyi" %% "upickle" % "2.0.0"
+
 )
