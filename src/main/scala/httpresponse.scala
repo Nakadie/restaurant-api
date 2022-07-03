@@ -5,19 +5,17 @@ import upickle.default._
 //extending to cask.MainRoutes sets the default server location to http://localhost:8080
 object httpresponse extends cask.MainRoutes{
 
-  @cask.get("/")
-  def index() = {
-    "Hello!"
-  }
-
-  //display all tables with their current orders ########done
+  //display all tables with their current orders
   @cask.getJson("/tables")
+  // no variables. Will display all of the table values in the list, will return an empty list if no orders.
     def displayAll() = {
-    ujson.Arr(values.tables.map { x => x.toJson()})
+    val data = ujson.Arr(values.tables.map { x => x.toJson()})
+    data(0)
   }
 
-  //display all orders for specific table ######### done
+  //display all orders for specific table
   @cask.get("/tables/orders")
+  //1 variable: (tableNumber) as json. Will display the table number and orders for a specific table.
   def displayTableOrders(tableNum: cask.Request): Value = {
     val data = ujson.read(tableNum)
     val table = values.tables.filter { x => x.tableNumber == data("tableNumber").value }
@@ -26,9 +24,9 @@ object httpresponse extends cask.MainRoutes{
     arr(0)
   }
 
-
-  //place orders for specific table #######done
+  //place orders for specific table
   @cask.post("/tables/orders")
+  //2 variables: (tableNumber, orders) as json. Will place an order if an order is not already in the tables list.
   def placeOrders(req: cask.Request) = {
     val data = ujson.read(req)
     val orders = data("orders").arr
@@ -46,6 +44,7 @@ object httpresponse extends cask.MainRoutes{
 
   //change a single order from one item to another
   @cask.patch("/tables/orders")
+  //takes 3 variables tableNumber, newOrder, oldOrder. it will search through tables to find the table and update the orders list
   def changeOrder(value: cask.Request): String = {
     val data = ujson.read(value)
     val target = values.tables.filter(x => x.tableNumber == data("tableNumber").num)
@@ -56,8 +55,5 @@ object httpresponse extends cask.MainRoutes{
     "complete"
   }
 
-
-  //10 threads and make sure each makes a request.
-  //return as json
   initialize()
 }
