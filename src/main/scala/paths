@@ -1,16 +1,63 @@
 default http://localhost:8080/
 
 get http://localhost:8080/tables -> returns all the tables and orders
-
-get http://localhost:8080/tables/orders -> 1 variable: (tableNumber) as json. Will display the table number and orders for a specific table.
+input: n/a
+Output:
 
 post http://localhost:8080/tables/orders -> 2 variables: (tableNumber, orders) as json. Will place an order if an order is not already in the tables list as new object.
+input:  {
+        "tableNumber": 2,
+        "orders": ["pizza", "hamburger"]
+        }
+
+output: complete
+
+get http://localhost:8080/tables/orders -> 1 variable: (tableNumber) as json. Will display the table number and orders for a specific table.
+ input   {                    
+        "tableNumber": 2
+        }
+
+ouput:  {
+        "tableNumber": 2,
+        "orders": [
+                        [
+                        "pizza",
+                        "10:00 Min"
+                        ],
+                        [
+                        "hamburger",
+                        "6:00 Min"
+                        ]
+                ]
+        }
+
+
 
 patch http://localhost:8080/tables/orders ->  3 variables: (tableNumber, newOrder, oldOrder) as json. it will search through tables to find the table and update the orders list as new table object
+input   {
+        "tableNumber": 2,
+        "oldOrder": "pizza",
+        "newOrder": "wings"
+        }
+output: complete
 
 delete http://localhost:8080/tables/orders -> 2 variables: (tableNumber, deleteOrder) as json. will remove one order from the order list and create new table object
+input   {
+        "tableNumber": 1,
+        "deleteOrder": "wings"
+        }
+output: complete
 
-
+get http://localhost:8080/tables/orders/order -> 2 variables (tableNumber, order) as json. will return the table, order, cooktime as json
+input:  {
+        "tableNumber": 2,
+        "order": "pizza"
+        }
+output: {
+        "tableNumber": 2,
+        "order": "pizza",
+        "cooktime": "12:00 Min"
+        }
 
 
 
