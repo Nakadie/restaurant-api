@@ -5,7 +5,7 @@ import ujson.Value
 object httpresponse extends cask.MainRoutes{
 
   @cask.get("/")
-  def connectioncheck(): String = {
+  def connectioncheck(): Value = {
     "connected"
   }
 
@@ -22,11 +22,12 @@ object httpresponse extends cask.MainRoutes{
   @cask.get("/tables/orders")
   //1 variable: (tableNumber) as json. Will display the table number and orders for a specific table.
   def displayTableOrders(tableNum: cask.Request): Value  = {
-    if (values.tables.isEmpty) {
+    val data = ujson.read(tableNum)
+    val tablenum = data("tableNumber").num
+    if (!values.tables.exists(x => x.tableNumber == tablenum)) {
       "there are no orders"
     } else {
-      val data = ujson.read(tableNum)
-      val table = values.tables.filter { x => x.tableNumber == data("tableNumber").value }
+      val table = values.tables.filter { x => x.tableNumber == tablenum }
       val ret = table.head.toJson()
       val arr = ujson.Arr(ret)
       arr(0)
@@ -36,7 +37,7 @@ object httpresponse extends cask.MainRoutes{
   //place orders for specific table
   @cask.post("/tables/orders")
   //2 variables: (tableNumber, orders) as json. Will place an order if an order is not already in the tables list as new object.
-  def placeOrders(req: cask.Request): String = {
+  def placeOrders(req: cask.Request): Value = {
     val data = ujson.read(req)
     val tablenum = data("tableNumber").num
     val orders = data("orders").arr
@@ -54,7 +55,7 @@ object httpresponse extends cask.MainRoutes{
   //change a single order from one item to another
   @cask.patch("/tables/orders")
   //takes 3 variables: (tableNumber, newOrder, oldOrder) as json. it will search through tables to find the table and update the orders list as new table object
-  def changeOrder(value: cask.Request): String = {
+  def changeOrder(value: cask.Request): Value = {
     val data = ujson.read(value)
     val tablenum = data("tableNumber").num
     val newOrder = data("newOrder")
@@ -64,6 +65,20 @@ object httpresponse extends cask.MainRoutes{
     values.tables = values.tables.map { x => if (x.tableNumber == tablenum) models.Table(x.tableNumber, orderlist) else x }
     "complete"
   }
+
+  //delete single order from table
+  @cask.delete("/tables/orders")
+  //takes 2 variables: (tableNumber, deleteOrder) as json. will remove one order from the order list and create new table object
+  def removeOrder(value: cask.Request): Value = {
+    val data = ujson.read(value)
+    val tablenum = data("tableNumber").num
+    val deleteOrder = data("deleteOrder").str
+    val target = values.tables.filter(x => x.tableNumber == tablenum)
+    val orderlist = target.head.orders.filter(x => x.food != deleteOrder)
+    values.tables = values.tables.map { x => if (x.tableNumber == tablenum) models.Table(x.tableNumber, orderlist) else x }
+    "order deleted"
+  }
+
 
   initialize()
 }
