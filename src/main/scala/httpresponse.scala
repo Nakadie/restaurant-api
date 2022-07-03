@@ -32,9 +32,10 @@ object httpresponse extends cask.MainRoutes{
   def placeOrders(req: cask.Request) = {
     val data = ujson.read(req)
     val orders = data("orders").arr
-    val ordersList = orders.map{x => models.Order(x.toString().slice(1, (x.toString().length)- 1))}
-    val neworder = models.Table(data("tableNumber").toString().toInt, ordersList.toList)
-    if (values.tables.contains(neworder)) {
+    val ordersList = orders.map{x => models.Order(x.str)}
+    val neworder = models.Table(data("tableNumber").num.toInt, ordersList.toList)
+    val currentTables = values.tables.map{x => x.tableNumber}
+    if (currentTables.contains(neworder.tableNumber)) {
       "already have order"
     } else {
       values.tables += neworder
@@ -47,11 +48,12 @@ object httpresponse extends cask.MainRoutes{
   @cask.patch("/tables/orders")
   def changeOrder(value: cask.Request): String = {
     val data = ujson.read(value)
-    val target = values.tables.filter(x => x.tableNumber == data("tableNumber").toString().toInt)
-    println(target)
-    println(data("oldOrder").toString())
-    /*val newtable = target(0).orders.map{x => x.food == data("oldOrder").toString(). }*/
-    s"order for table ${data("tableNumber")}, changed from ${data("oldOrder").toString()} to ${data("newOrder").toString()}"
+    val target = values.tables.filter(x => x.tableNumber == data("tableNumber").num)
+    val newOrder = data("newOrder")
+    val oldOrder = data("oldOrder")
+    val orderlist = target(0).orders.map { x => if (x.food == oldOrder.str) models.Order(newOrder.str) else x }
+    values.tables = values.tables.map { x => if (x.tableNumber == data("tableNumber").num) models.Table(x.tableNumber, orderlist) else x }
+    "complete"
   }
 
 

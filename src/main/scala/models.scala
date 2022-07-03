@@ -6,8 +6,8 @@ object models {
       "orders" -> orders.map{x => List(x.food, x.time)})
     }
   }
-  case class Order(val food: String){
-    val time: String = Random.between(5, 16).toString + ":00 Min"
+  case class Order(val food: String, val time: String = Random.between(5, 16).toString + ":00 Min"){
+
   }
 
   def main(args: Array[String]): Unit = {
